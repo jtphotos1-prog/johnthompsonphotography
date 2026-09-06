@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Camera, Mail, Image as ImageIcon } from "lucide-react";
+import { Camera, Mail, Image as ImageIcon, ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function JohnThompsonPhotography() {
   const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [currentSlide, setCurrentSlide] = useState(0);
+  
   const photos = [
     "https://images.unsplash.com/photo-1504203700686-0f0fbb8b1f5b",
     "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4",
@@ -16,6 +18,14 @@ export default function JohnThompsonPhotography() {
     "https://images.unsplash.com/photo-1519681393784-d120267933ba"
   ];
 
+  // Auto-advance slideshow every 5 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % photos.length);
+    }, 5000);
+    return () => clearInterval(timer);
+  }, [photos.length]);
+
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
@@ -24,6 +34,14 @@ export default function JohnThompsonPhotography() {
     e.preventDefault();
     alert("Message sent! John will contact you soon.");
     setForm({ name: "", email: "", message: "" });
+  };
+
+  const goToPrevious = () => {
+    setCurrentSlide((prev) => (prev - 1 + photos.length) % photos.length);
+  };
+
+  const goToNext = () => {
+    setCurrentSlide((prev) => (prev + 1) % photos.length);
   };
 
   return (
@@ -43,24 +61,78 @@ export default function JohnThompsonPhotography() {
         </div>
       </section>
 
-      {/* Gallery */}
+      {/* Slideshow Gallery */}
       <section className="py-20 px-6 max-w-6xl mx-auto">
         <div className="flex items-center gap-3 mb-10">
           <ImageIcon />
           <h2 className="text-3xl font-semibold">Portfolio</h2>
         </div>
 
+        {/* Main Slideshow */}
+        <div className="relative w-full mb-8">
+          <div className="relative overflow-hidden rounded-lg bg-neutral-900 aspect-video">
+            <img
+              src={`${photos[currentSlide]}?auto=format&fit=crop&w=1200&h=675&q=80`}
+              alt={`Portfolio image ${currentSlide + 1}`}
+              className="w-full h-full object-cover transition-opacity duration-500"
+            />
+          </div>
+
+          {/* Navigation Buttons */}
+          <button
+            onClick={goToPrevious}
+            className="absolute left-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/75 rounded-full p-2 transition-colors z-10"
+            aria-label="Previous slide"
+          >
+            <ChevronLeft size={24} />
+          </button>
+          <button
+            onClick={goToNext}
+            className="absolute right-4 top-1/2 -translate-y-1/2 bg-black/50 hover:bg-black/75 rounded-full p-2 transition-colors z-10"
+            aria-label="Next slide"
+          >
+            <ChevronRight size={24} />
+          </button>
+
+          {/* Slide Indicators */}
+          <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+            {photos.map((_, idx) => (
+              <button
+                key={idx}
+                onClick={() => setCurrentSlide(idx)}
+                className={`h-2 rounded-full transition-all ${
+                  idx === currentSlide ? "bg-white w-6" : "bg-white/50 w-2"
+                }`}
+                aria-label={`Go to slide ${idx + 1}`}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Thumbnail Grid */}
         <div className="grid md:grid-cols-3 gap-6">
           {photos.map((src, i) => (
-            <Card key={i} className="overflow-hidden bg-neutral-900 border-none">
+            <Card
+              key={i}
+              className={`overflow-hidden bg-neutral-900 border-none cursor-pointer transition-all ${
+                i === currentSlide ? "ring-2 ring-white" : "hover:ring-2 hover:ring-neutral-700"
+              }`}
+              onClick={() => setCurrentSlide(i)}
+            >
               <CardContent className="p-0">
                 <img
                   src={`${src}?auto=format&fit=crop&w=800&q=80`}
                   className="w-full h-64 object-cover hover:scale-105 transition-transform"
+                  alt={`Thumbnail ${i + 1}`}
                 />
               </CardContent>
             </Card>
           ))}
+        </div>
+
+        {/* Slide Counter */}
+        <div className="text-center mt-8 text-neutral-400">
+          Image {currentSlide + 1} of {photos.length}
         </div>
       </section>
 
