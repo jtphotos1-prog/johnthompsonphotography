@@ -56,8 +56,14 @@ export default function JohnThompsonPhotography() {
           Capturing timeless moments through the lens. Portraits, landscapes,
           events, and creative photography.
         </p>
-        <div className="mt-8">
+        <div className="mt-8 flex justify-center gap-4">
           <Button className="rounded-2xl">Book a Session</Button>
+          <a
+            href="https://johnthompsonphotography-fnx6-1zlu9esqz.vercel.app"
+            className="inline-flex items-center rounded-2xl border border-white px-4 py-2 font-medium hover:bg-white hover:text-black"
+          >
+            Visit Splash
+          </a>
         </div>
       </section>
 
