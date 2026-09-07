@@ -151,10 +151,16 @@ export default function JohnThompsonPhotography() {
 
       {/* Contact */}
       <section className="py-20 px-6 max-w-3xl mx-auto">
-        <div className="flex items-center gap-3 mb-8">
+        <div className="flex items-center gap-3 mb-3">
           <Mail />
           <h2 className="text-3xl font-semibold">Contact</h2>
         </div>
+        <a
+          href="tel:+16093155136"
+          className="inline-block mb-8 text-neutral-400 hover:text-white"
+        >
+          609-315-5136
+        </a>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <Input
